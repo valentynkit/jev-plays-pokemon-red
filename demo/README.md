@@ -11,4 +11,4 @@ ffmpeg -i demo/recording.mov -vf "fps=30,scale=1280:-2:flags=lanczos" \
 
 Check the size with `ls -lh demo/overlay.mp4`; raise `-crf` toward 30 until it is under
 5 MB. Keep it MP4 for X, which re-encodes GIFs to muted video anyway. For a README GIF
-instead, use the two-pass palette command in `research/04` section 2.
+instead, use the two-pass palette command in `docs/research/04` section 2.

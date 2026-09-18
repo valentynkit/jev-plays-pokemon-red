@@ -5,9 +5,9 @@ Point a fresh Claude Code session at this file from inside `jev-plays-pokemon/`.
 
 ## Context to load first
 
-`../CLAUDE.md`, `CLAUDE.md`, `CONTEXT.md` sections 1, 7, 8 (pitch, README skeleton,
-launch), `../SHARED.md` "The recipe every repo follows" and "Launch",
-`../research/00a-virality-recipe.md` (what broke out and why), `../research/04` section 2
+`CLAUDE.md` ("Lab rules"), `CLAUDE.md`, `CONTEXT.md` sections 1, 7, 8 (pitch, README skeleton,
+launch), `docs/SHARED.md` "The recipe every repo follows" and "Launch",
+`docs/research/00a-virality-recipe.md` (what broke out and why), `docs/research/04` section 2
 (recording pipeline, size limits, X media specs), `demo/README.md`, and `src/jpp/overlay.py`.
 
 ## What the clip must do
@@ -38,7 +38,7 @@ back, and the calibration score ticking. Nobody else shows this.
    the pick; (c) 6 s, the ticker close-up: decisions/sec, $/hour, Brier with n. Plus three
    stills: mid-battle bars, the state JSON, the measure line as terminal text.
 4. **Recording recipe.** QuickTime cropped to the window, then the ffmpeg two-pass palette
-   command from `research/04` section 2 for the README GIF (under 5 MB) and H.264 MP4 for X
+   command from `docs/research/04` section 2 for the README GIF (under 5 MB) and H.264 MP4 for X
    (1080p max, under 140 s). Write the exact commands into `demo/README.md`. If no ROM
    exists, record the replay of `fixtures/runs/sample.jsonl` and label the clip as a
    replay in the post; never pass it off as live.

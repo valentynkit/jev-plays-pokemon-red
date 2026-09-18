@@ -1,6 +1,6 @@
 # jev-plays-pokemon
 
-Builds on `../SHARED.md`. Cites `research/01` (API, testing), `02` section 5 (questions),
+Builds on `docs/SHARED.md`. Cites `docs/research/01` (API, testing), `02` section 5 (questions),
 `03` section 5 (prior art), `04` (README, recording, launch), `00c` section E, `00d` (gap).
 
 ## 1. Pitch

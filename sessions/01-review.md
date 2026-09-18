@@ -4,14 +4,14 @@ Paste or point a fresh Claude Code session at this file from inside `jev-plays-p
 
 ## Context to load first
 
-1. `../CLAUDE.md` (monorepo rules, real Jev access), then `CLAUDE.md` here ("Build state"
+1. `CLAUDE.md` ("Lab rules") (monorepo rules, real Jev access), then `CLAUDE.md` here ("Build state"
    and "Next session" sections carry what the first build left unverified).
 2. `CONTEXT.md` in full, including the review responses at the end; `REVIEW-3.md` for the
-   verdict. `../SHARED.md` for the contract every project follows.
-3. `../research/04-quality-bar-and-launch.md` section 1 (the README skeleton and section
+   verdict. `docs/SHARED.md` for the contract every project follows.
+3. `docs/research/04-quality-bar-and-launch.md` section 1 (the README skeleton and section
    order, taken from the five reference repos) and section 3 (measure line convention).
 4. `docs/comparison.md` for what the incumbents already do. Prior art at
-   `/tmp/prior-art/` (re-clone per `../CLAUDE.md` if gone): milanboers_jev-plays-pokemon,
+   `/tmp/prior-art/` (re-clone per `CLAUDE.md` if gone): milanboers_jev-plays-pokemon,
    PWhiddy_PokemonRedExperiments, fhshaik_typesafe-mario, pret_pokered.
 
 ## State on entry
@@ -41,7 +41,7 @@ readers on sonnet, never `model: inherit`). Treat every line of `src/jpp/` as su
    the probe prints, run the smoke test, then a 50-decision headless run, then ten runs for
    the calibration corpus. With gateway credits: `fixtures/record.py` for the missing
    jaggedness cassettes, then `uv run measure runs/*.jsonl` for the real headline.
-4. **The README, state of the art.** Follow `research/04` section 1 exactly: measured
+4. **The README, state of the art.** Follow `docs/research/04` section 1 exactly: measured
    number in the first sentence (or an honest `__` with the command that fills it), one
    paste-and-run command, MP4 or GIF above the fold, Why with the limit folded in, the
    speed and cost table against Claude Plays Pokemon and the two incumbents, Install with
