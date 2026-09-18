@@ -9,9 +9,9 @@ Verdict after three review rounds: **ready to build**. The run starts in Red's h
 
 ## Build state (2026-09-18, after the review session)
 
-All nine CONTEXT.md tasks are coded and reviewed. `uv run pytest -q` gives 75 passed, 5
-skipped. The skips are the ROM smoke test (2) and the three jaggedness assertions that need
-recorded real answers.
+All nine CONTEXT.md tasks are coded and reviewed. `uv run pytest -q` gives 78 passed, 6
+skipped. The skips are the ROM tests (3, one of which also wants `POKEMON_STATE`) and the
+three jaggedness assertions that need recorded real answers.
 
 Five reviewers went over `src/jpp/` file by file against pret/pokered and the installed
 PyBoy. Six real findings, all fixed, all listed in CONTEXT.md "Review round 4": the

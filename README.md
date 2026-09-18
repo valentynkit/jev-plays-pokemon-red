@@ -126,7 +126,8 @@ Tests run offline against `fixtures/fake_jev.py` and the recorded answers in
 Three checks need a cartridge and are coded but unrun here. Run them yourself:
 
 ```
-uv run pytest tests/test_smoke_rom.py -q          # with POKEMON_ROM set
+uv run pytest tests/test_smoke_rom.py -q          # POKEMON_ROM, and POKEMON_STATE for
+                                                  # the save state that starts in the bedroom
 uv run jpp probe --rom /path/to/red.gb
 uv run jpp play --rom /path/to/red.gb --headless --max-decisions 50
 ```

@@ -45,6 +45,11 @@ class BattleLatch:
     goal-check tick. The previous value (1 wild, 2 trainer, $FF lost) does not matter,
     only the flip to 0. Unset means "no battle has finished", so goal predicates that
     depend on it fail closed.
+
+    `EndOfBattle` writes the result before it clears `wIsInBattle`, so reading both from
+    one snapshot cannot race. The edge is sampled every 8 frames, so a battle that both
+    starts and ends inside one gap is missed; v0.1's only latched goal is a multi-turn
+    trainer battle, and a wild encounter that short would need the tick rate raised.
     """
 
     WIN, LOSE, DRAW = 0x00, 0x01, 0x02
@@ -257,4 +262,7 @@ def _record(goal, branch: Branch, decision: Decision, driver: Driver, st) -> dic
         "active_hp_fraction": st.battle.active.hp_fraction
         if st.battle.active
         else None,
+        # the party slot that was judged. A fainted mon never gets another decision of
+        # its own, so the faint shows up as the next decision being a different slot.
+        "active_slot": st.active_slot if st.battle.active else None,
     }

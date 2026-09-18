@@ -51,6 +51,28 @@ def test_a_turn_is_still_labelled_across_a_row_with_no_hp():
     assert measure.pairs(run) == [(0.8, 1)]
 
 
+def test_a_forced_switch_counts_as_the_faint_it_was():
+    """A fainted mon never gets another decision, so its own HP row never shows zero."""
+    judged = row(
+        nouls={"faints_this_turn": 0.7}, active_slot=0, choice="use_move_ember"
+    )
+    after = row(active_slot=1, active_hp_fraction=1.0)
+    assert measure.pairs([judged, after]) == [(0.7, 1)]
+
+
+def test_switching_on_purpose_is_not_a_faint():
+    judged = row(
+        nouls={"faints_this_turn": 0.7}, active_slot=0, choice="switch_to_pidgey"
+    )
+    after = row(active_slot=1, active_hp_fraction=1.0)
+    assert measure.pairs([judged, after]) == [(0.7, 0)]
+
+
+def test_a_run_recorded_before_the_slot_was_logged_still_scores():
+    judged = row(nouls={"faints_this_turn": 0.7})
+    assert measure.pairs([judged, row(active_hp_fraction=0.0)]) == [(0.7, 1)]
+
+
 def test_a_label_never_crosses_a_battle():
     run = [
         row(nouls={"faints_this_turn": 0.8}),

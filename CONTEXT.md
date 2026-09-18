@@ -471,3 +471,21 @@ tilemap and `classify` answers every non-battle text box with A.
 The six recorded cassettes are keyed on the state body, and the state body changed, so
 `fixtures/record.py` has to run again before `make_run.py` can rebuild a sample from real
 answers.
+
+Applied after the first pass over the reports, same round:
+
+- **The calibration label was wrong about faints.** A mon that faints never gets another
+  decision of its own, so scoring "HP is zero on the next row" scored the replacement at
+  full health and called it a survival. Each row now logs the party slot it judged, and a
+  next decision on a different slot that this row did not choose counts as the faint it
+  was: Gen 1 forces a switch for no other reason. Rows recorded before the slot existed
+  still score on HP alone.
+- **`jpp play --overlay` did not exist.** The README's one paste-and-run command took a
+  flag `cli.py` never defined; `play` now takes it and feeds the window per decision. The
+  headline number is still only taken headless, which section 5 already pinned.
+- **A ROM-gated test for the readiness predicate.** `test_smoke_rom.py` runs the loop out
+  of the house from a user-supplied save state (`POKEMON_STATE`). The old ROM test only
+  ticked through the intro without pressing anything, so it would have passed while the
+  agent deadlocked on the first text box.
+- `--rom`, `--ram` and `overlay --replay` are checked for existence by argparse instead of
+  surfacing a traceback.

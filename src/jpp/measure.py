@@ -43,25 +43,39 @@ def pairs(run: list[dict]) -> list[tuple[float, int]]:
         probability = (record.get("nouls") or {}).get(NOUL)
         if probability is None:
             continue
-        hp = _next_active_hp(run, i)
-        if hp is None:
+        outcome = _fainted(run, i)
+        if outcome is None:
             continue
-        out.append((probability, int(hp == 0)))
+        out.append((probability, outcome))
     return out
 
 
-def _next_active_hp(run: list[dict], i: int) -> float | None:
-    """The active slot's HP at the next decision of the same battle.
+def _fainted(run: list[dict], i: int) -> int | None:
+    """Did the mon judged on row `i` go down before it got another decision?
 
-    Scans forward rather than taking `i + 1`: an overworld or dialogue row logged inside
-    the same battle index would otherwise drop a turn that does have a label.
+    The next decision of the same battle answers it. Two ways to read that row, because
+    a mon that faints never gets another decision of its own:
+
+    - same slot still out: it survived unless its HP is zero.
+    - a different slot is out, and this row did not choose to switch: the game forced the
+      switch, which in Gen 1 only happens on a faint.
+
+    Rows are scanned forward rather than taking `i + 1`, so an overworld or dialogue row
+    logged inside the same battle does not drop the turn. Runs recorded before the slot
+    was logged fall back to the HP alone.
     """
+    slot = run[i].get("active_slot")
     for following in run[i + 1 :]:
         if following.get("battle_index") != run[i].get("battle_index"):
             return None
         hp = following.get("active_hp_fraction")
-        if hp is not None:
-            return hp
+        if hp is None:
+            continue
+        next_slot = following.get("active_slot")
+        if slot is None or next_slot is None or next_slot == slot:
+            return int(hp == 0)
+        chose_to_switch = str(run[i].get("choice") or "").startswith("switch_to_")
+        return 0 if chose_to_switch else 1
     return None
 
 
