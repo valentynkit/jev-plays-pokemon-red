@@ -76,7 +76,7 @@ def test_input_ready_is_per_button_because_joy_ignore_is_a_mask():
 def test_a_text_box_still_gets_its_a_press_while_the_script_owns_the_pad():
     """The regression that would hang every run: Oak's speech never advances."""
     ram = make_ram.overworld()
-    ram[S.TEXT_BOX_ID] = 0x01
+    ram[S.FONT_LOADED] = 0x01
     ram[S.JOY_IGNORE] = S.PAD_SELECT | S.PAD_START | S.PAD_CTRL_PAD
     driver = loop.Driver(FakeEmulator(ram))
     driver.tick()
@@ -153,7 +153,7 @@ def test_a_battle_menu_is_a_branch_and_carries_the_legal_options():
 
 def test_a_text_box_with_no_cursor_costs_one_a_press():
     ram = make_ram.overworld()
-    ram[S.TEXT_BOX_ID] = 0x01
+    ram[S.FONT_LOADED] = 0x01
     driver = loop.Driver(FakeEmulator(ram))
     driver.tick()
     assert loop.classify(driver, goal("get_starter"), (12, 11)) == ("press", "a")
@@ -224,3 +224,15 @@ def test_buttons_for_a_non_battle_branch_never_touch_the_battle_menu(kind):
     )
     for option in branch.options:
         assert options.buttons_for(state, branch, option)
+
+
+def test_a_stale_text_box_id_does_not_freeze_the_walk():
+    """On a cartridge wTextBoxID reads 1 from the intro onward and never clears, so
+    treating it as "a box is open" pressed A forever and the agent never left the house."""
+    ram = make_ram.overworld()
+    ram[S.TEXT_BOX_ID] = 0x01
+    ram[S.FONT_LOADED] = 0x00
+    driver = loop.Driver(FakeEmulator(ram))
+    driver.tick()
+    action, payload = loop.classify(driver, goal("get_starter"), (12, 11))
+    assert (action, payload) != ("press", "a")

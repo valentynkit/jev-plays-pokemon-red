@@ -1,0 +1,20 @@
+{
+ "model": "typesafe-ai/jev",
+ "answers": {
+  "next_action": {
+   "type": "choice",
+   "choice": "step_down",
+   "confidence": 0.68,
+   "probabilities": {
+    "other": 0.09,
+    "step_down": 0.68,
+    "step_right": 0.23
+   }
+  }
+ },
+ "usage": {
+  "input_tokens": 463,
+  "output_tokens": 42
+ },
+ "_latency_ms": 625.2
+}

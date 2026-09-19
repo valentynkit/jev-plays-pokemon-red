@@ -1,97 +1,97 @@
 {
  "battle_turn_1": {
-  "key": "e0f0a25427a6dd487b77081bc021de1dac908d7247e7036b7dbf85dbb3ed12e7",
+  "key": "dc0e19192f5fd65ee2eb3960132359bd003defcd4423c567764492e48559ba3c",
   "choice": "use_move_scratch",
   "confidence": 0.66,
   "probabilities": {
-   "switch_to_pidgey": 0.2,
    "other": 0.01,
-   "use_move_growl": 0.06,
+   "use_move_ember": 0.1,
+   "switch_to_pidgey": 0.18,
    "use_move_scratch": 0.66,
-   "use_move_ember": 0.07
+   "use_move_growl": 0.05
   },
   "nouls": {
-   "faints_this_turn": 0.34,
+   "faints_this_turn": 0.37,
    "should_flee": 0.17
   },
-  "latency_ms": null,
-  "input_tokens": 931,
+  "latency_ms": 5927.4,
+  "input_tokens": 915,
   "model": "typesafe-ai/jev"
  },
  "battle_turn_2": {
-  "key": "ba5d0f983ba74a9dce9e9434f7a99b67eb1a98b6c9832aa68e0d9ff4ee58eee3",
+  "key": "1214ae7b403ba429dc850a78e0330e253a67e83f1ac5071fbda3897ae8a89a11",
   "choice": "use_move_scratch",
-  "confidence": 0.74,
+  "confidence": 0.72,
   "probabilities": {
+   "switch_to_pidgey": 0.12,
    "use_move_growl": 0.03,
-   "use_move_ember": 0.07,
-   "other": 0.01,
-   "switch_to_pidgey": 0.15,
-   "use_move_scratch": 0.74
-  },
-  "nouls": {
-   "faints_this_turn": 0.23,
-   "should_flee": 0.13
-  },
-  "latency_ms": null,
-  "input_tokens": 941,
-  "model": "typesafe-ai/jev"
- },
- "battle_turn_3": {
-  "key": "b4b210c4d295128db37f03fc3881723961b5b118cd9ec578d8b65d538bd31b88",
-  "choice": "use_move_scratch",
-  "confidence": 0.6,
-  "probabilities": {
-   "switch_to_pidgey": 0.28,
-   "use_move_scratch": 0.6,
-   "use_move_growl": 0.02,
-   "other": 0.01,
-   "use_move_ember": 0.09
-  },
-  "nouls": {
-   "faints_this_turn": 0.33,
-   "should_flee": 0.18
-  },
-  "latency_ms": null,
-  "input_tokens": 939,
-  "model": "typesafe-ai/jev"
- },
- "battle_turn_4": {
-  "key": "229d08dfc714825a4c78fab5135f261534aef513dac7f5e7632b9fed5f2ca188",
-  "choice": "use_move_scratch",
-  "confidence": 0.53,
-  "probabilities": {
-   "use_move_growl": 0.01,
-   "use_move_scratch": 0.53,
-   "use_move_ember": 0.08,
-   "switch_to_pidgey": 0.37,
+   "use_move_scratch": 0.72,
+   "use_move_ember": 0.12,
    "other": 0.01
   },
   "nouls": {
-   "faints_this_turn": 0.44,
-   "should_flee": 0.2
+   "faints_this_turn": 0.23,
+   "should_flee": 0.14
   },
-  "latency_ms": null,
-  "input_tokens": 937,
+  "latency_ms": 5680.3,
+  "input_tokens": 925,
   "model": "typesafe-ai/jev"
  },
- "baseline": {
-  "key": "b4b210c4d295128db37f03fc3881723961b5b118cd9ec578d8b65d538bd31b88",
+ "battle_turn_3": {
+  "key": "c055f29902307786fb6d60c4ed2bc9287378d73703ed1c2c32ad00429972f25b",
   "choice": "use_move_scratch",
-  "confidence": 0.6,
+  "confidence": 0.62,
   "probabilities": {
-   "switch_to_pidgey": 0.28,
-   "use_move_scratch": 0.6,
-   "use_move_growl": 0.02,
+   "use_move_growl": 0.03,
+   "use_move_scratch": 0.62,
+   "switch_to_pidgey": 0.22,
+   "other": 0.01,
+   "use_move_ember": 0.12
+  },
+  "nouls": {
+   "faints_this_turn": 0.35,
+   "should_flee": 0.18
+  },
+  "latency_ms": 5862.9,
+  "input_tokens": 923,
+  "model": "typesafe-ai/jev"
+ },
+ "battle_turn_4": {
+  "key": "c7ac575d910279e954564b6192c06f3160f258f30f0523b2fa0422e92261830b",
+  "choice": "use_move_scratch",
+  "confidence": 0.56,
+  "probabilities": {
+   "use_move_growl": 0.01,
+   "use_move_scratch": 0.56,
+   "switch_to_pidgey": 0.33,
    "other": 0.01,
    "use_move_ember": 0.09
   },
   "nouls": {
-   "faints_this_turn": 0.33,
+   "faints_this_turn": 0.48,
+   "should_flee": 0.22
+  },
+  "latency_ms": 5888.2,
+  "input_tokens": 921,
+  "model": "typesafe-ai/jev"
+ },
+ "baseline": {
+  "key": "c055f29902307786fb6d60c4ed2bc9287378d73703ed1c2c32ad00429972f25b",
+  "choice": "use_move_scratch",
+  "confidence": 0.62,
+  "probabilities": {
+   "use_move_growl": 0.03,
+   "use_move_scratch": 0.62,
+   "switch_to_pidgey": 0.22,
+   "other": 0.01,
+   "use_move_ember": 0.12
+  },
+  "nouls": {
+   "faints_this_turn": 0.35,
    "should_flee": 0.18
   },
   "latency_ms": null,
-  "input_tokens": 939,
+  "input_tokens": 923,
   "model": "typesafe-ai/jev"
  }
 }

@@ -43,7 +43,7 @@
    "use_move_scratch": "attack with SCRATCH, a Normal move, 33 of 35 PP left, neutral against WATER",
    "use_move_growl": "use GROWL, a Normal move, 40 of 40 PP left, neutral against WATER",
    "use_move_ember": "attack with EMBER, a Fire move, 25 of 25 PP left, not very effective against WATER",
-   "switch_to_pidgey": "switch to PIDGEY, level 4, healthy at 17/17 HP; the opponent gets a free turn"
+   "switch_to_pidgey": "switch to PIDGEY, level 4, healthy; the opponent gets a free turn"
   }
  },
  "battle_turn_2": {
@@ -90,7 +90,7 @@
    "use_move_scratch": "attack with SCRATCH, a Normal move, 33 of 35 PP left, neutral against WATER",
    "use_move_growl": "use GROWL, a Normal move, 40 of 40 PP left, neutral against WATER",
    "use_move_ember": "attack with EMBER, a Fire move, 25 of 25 PP left, not very effective against WATER",
-   "switch_to_pidgey": "switch to PIDGEY, level 4, healthy at 17/17 HP; the opponent gets a free turn"
+   "switch_to_pidgey": "switch to PIDGEY, level 4, healthy; the opponent gets a free turn"
   }
  },
  "battle_turn_3": {
@@ -137,7 +137,7 @@
    "use_move_scratch": "attack with SCRATCH, a Normal move, 33 of 35 PP left, neutral against WATER",
    "use_move_growl": "use GROWL, a Normal move, 40 of 40 PP left, neutral against WATER",
    "use_move_ember": "attack with EMBER, a Fire move, 25 of 25 PP left, not very effective against WATER",
-   "switch_to_pidgey": "switch to PIDGEY, level 4, healthy at 17/17 HP; the opponent gets a free turn"
+   "switch_to_pidgey": "switch to PIDGEY, level 4, healthy; the opponent gets a free turn"
   }
  },
  "battle_turn_4": {
@@ -184,7 +184,7 @@
    "use_move_scratch": "attack with SCRATCH, a Normal move, 33 of 35 PP left, neutral against WATER",
    "use_move_growl": "use GROWL, a Normal move, 40 of 40 PP left, neutral against WATER",
    "use_move_ember": "attack with EMBER, a Fire move, 25 of 25 PP left, not very effective against WATER",
-   "switch_to_pidgey": "switch to PIDGEY, level 4, healthy at 17/17 HP; the opponent gets a free turn"
+   "switch_to_pidgey": "switch to PIDGEY, level 4, healthy; the opponent gets a free turn"
   }
  }
 }

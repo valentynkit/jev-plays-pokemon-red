@@ -81,6 +81,7 @@ BATTLE_SAVED_MENU_ITEM = 0xCC2D  # wBattleAndStartSavedMenuItem
 PLAYER_MOVE_LIST_INDEX = 0xCC2E  # wPlayerMoveListIndex, the last move picked
 PLAYER_MON_NUMBER = 0xCC2F  # wPlayerMonNumber, party index of the active mon
 TEXT_BOX_ID = 0xD125  # wTextBoxID
+TILE_MAP = 0xC3A0  # wTileMap, the 20x18 screen buffer in charmap codes
 JOY_IGNORE = 0xCD6B  # wJoyIgnore, "Set buttons are ignored"
 
 # wJoyIgnore is a per-button mask, not a boolean: `_Joypad` in engine/joypad.asm ANDs its

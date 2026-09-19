@@ -5,10 +5,18 @@ route is a hand-written list of tiles, most of them `warp_event` coordinates str
 of `data/maps/objects/*.asm`. Anything past Viridian needs a real occupancy map with warp
 edges, which is the v0.2 item in CONTEXT section 2.
 
-`ponytail:` the indoor tiles are exact (they are warp coordinates in the source). The two
-outdoor legs, Pallet Town's north exit and the walk up Route 1, are a straight line up the
-middle of a map whose width is known from `map_constants.asm` but whose walkable column is
-not. Confirm both with `jpp probe` on a real ROM; the ceiling is the learned map.
+The indoor tiles are exact: they are warp coordinates in the source. The outdoor legs were
+guesses and both were wrong, which a cartridge settled on 2026-09-19.
+
+Pallet Town, measured by walking every column: x=10 is the gap to Route 1 but only above
+y=2, and from the lab door at y=12 that column is walled. Axis-first stepping closed x
+first and parked against the wall forever. `_pallet_north` climbs x=9, which is clear from
+y=12 to y=2, and crosses at the top. That leg now works end to end.
+
+`ponytail:` Route 1 is still a straight line up x=10 and still wrong: the agent walks from
+y=35 to y=28 and stops there. One waypoint per map cannot express a route around a ledge,
+so this is the v0.2 occupancy map with warp edges from CONTEXT section 2, not another
+hand-picked tile.
 """
 
 from . import symbols as S
@@ -36,6 +44,16 @@ def _pallet_town(state) -> tuple[int, int]:
     return LAB_DOOR
 
 
+def _pallet_north(state) -> tuple[int, int]:
+    """Two legs, because axis-first stepping cannot do this in one.
+
+    Measured on a cartridge: x=10 is the gap to Route 1, but only above y=2. From the
+    lab door at y=12 that column is walled, and closing x first parks the agent against
+    it forever. x=9 is clear from y=12 up to y=2, so climb there and cross at the top.
+    """
+    return (9, 2) if state.y > 2 else (10, 0)
+
+
 def _oaks_lab(state) -> tuple[int, int]:
     """Oak until he asks, then Charmander's ball.
 
@@ -59,11 +77,13 @@ WAYPOINTS: dict[str, dict[int, object]] = {
         S.PALLET_TOWN: _pallet_town,
         S.OAKS_LAB: _oaks_lab,
     },
-    # the rival battle happens where we stand; no walking
-    "win_lab_rival": {},
-    # PALLET_TOWN is 10x9 blocks, ROUTE_1 10x18: head north up the middle
+    # the rival does not challenge on the spot. He intercepts on the way out, so the
+    # goal still has to walk: OaksLab.asm warp_event 4, 11 and 5, 11 are the door.
+    "win_lab_rival": {
+        S.OAKS_LAB: (5, 11),
+    },
     "reach_viridian": {
-        S.PALLET_TOWN: (10, 0),
+        S.PALLET_TOWN: _pallet_north,
         S.ROUTE_1: (10, 0),
     },
 }

@@ -106,7 +106,12 @@ def wilson(successes: int, n: int, z: float = 1.96) -> tuple[float, float]:
 
 def summarise(runs: list[list[dict]]) -> dict:
     decisions = [r for run in runs for r in run]
-    timed = [r for r in decisions if r.get("latency_ms")]
+    # a fallback never reached the model: its latency is the failed attempt, which
+    # under a rate limit is seconds of retry. Counting those printed 0.23 dec/s for
+    # a run whose five real calls averaged 700 ms.
+    timed = [
+        r for r in decisions if r.get("latency_ms") and not r.get("fell_back")
+    ]
     # A real run's clock is wall time from its first Jev call to its last, so idle
     # emulation counts against us. A ROM-less fixture run has no emulator at all, so it
     # can only report the call economy: its own latency, and it says so.
@@ -139,7 +144,7 @@ def summarise(runs: list[list[dict]]) -> dict:
         if seconds
         else None,
         "latency_p50_ms": _percentile(
-            [r.get("latency_ms") or 0 for r in decisions], 50
+            [r["latency_ms"] for r in timed], 50
         ),
         "fell_back": sum(1 for r in decisions if r.get("fell_back")),
         "stand_in_rows": sum(1 for r in decisions if r.get("source") == "fake"),
@@ -170,6 +175,10 @@ def lines(s: dict, note: str) -> list[str]:
         # a stand-in never hit the network, so it is not a Jev call and the headline
         # cannot quietly count it as one
         n += f", {s['stand_in_rows']} of them stand-ins"
+    if s["fell_back"]:
+        # on a real run the clock is wall time, so a rate limit's retry stalls land in
+        # the rate and make the agent look slow for someone else's reason
+        n += f", {s['fell_back']} fell back, so the clock includes their retries"
     if s["decisions_per_second"] is None:
         first = (
             f"decisions/sec and $/hour: not measured, no timed call in this run ({n})"

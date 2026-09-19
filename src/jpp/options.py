@@ -102,13 +102,10 @@ VISIBLE_TEXT_CHARS = 180  # two text box lines and a bit, CONTEXT section 4 risk
 
 
 def dialogue_branch(state, goal, visible_text: str, choices: list[str]) -> Branch:
-    """ponytail: no caller in `loop.classify` yet.
+    """A menu with a cursor in the overworld, read off the screen by `screen.py`.
 
-    v0.1 answers every non-battle text box with A, which is what the route needs, so
-    nothing decodes the tilemap into `visible_text` and this builder is exercised by
-    fixtures only. The truncation is here because NPC text is full of imperatives and the
-    model does not treat state as untrusted; whoever wires the tilemap reader inherits it
-    rather than having to remember it.
+    The truncation is deliberate: NPC text is full of imperatives and the model does not
+    treat state as untrusted.
     """
     opts = {f"answer_{_slug(c)}": f"answer {c}" for c in choices}
     body = {
@@ -159,6 +156,13 @@ def buttons_for(state, branch: Branch, option: str) -> list[str]:
     if branch.kind in ("tie", "dialogue"):
         if option.startswith("step_"):
             return [option[len("step_") :]]
+        if option.startswith("answer_"):
+            # the cursor sits on one of the choices already; A alone always takes the
+            # one it is on, which answered YES to every prompt including the nickname
+            wanted = option[len("answer_") :]
+            names = [k[len("answer_") :] for k in branch.options]
+            if wanted in names:
+                return _list_path(state.menu_item, names.index(wanted)) + ["a"]
         return ["a"]
     active = state.battle.active
     if option.startswith("use_move_"):

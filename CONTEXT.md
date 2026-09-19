@@ -48,7 +48,7 @@ So three claims, and the decoder is not one of them:
    against what the RAM says happened next, printed with n, the base rate, the constant
    predictor and an interval. Neither the RL camp nor the LLM-agent camp publishes this
    (`03` section 5), and neither incumbent publishes a number of any kind.
-3. **The overlay.** A 1280x720 window with every option's probability as a bar, the state
+3. **The overlay.** A 1080x1350 window with every option's probability as a bar, the state
    that was actually sent, and a running Brier. The incumbent ships a plain SDL window.
 
 Footnote, not a headline: our RAM addresses come from walking pret/pokered `ram/wram.asm`

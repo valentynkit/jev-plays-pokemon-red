@@ -1,0 +1,30 @@
+{
+ "model": "typesafe-ai/jev",
+ "answers": {
+  "next_action": {
+   "type": "choice",
+   "choice": "use_move_scratch",
+   "confidence": 0.72,
+   "probabilities": {
+    "switch_to_pidgey": 0.12,
+    "use_move_growl": 0.03,
+    "use_move_scratch": 0.72,
+    "use_move_ember": 0.12,
+    "other": 0.01
+   }
+  },
+  "faints_this_turn": {
+   "type": "noul",
+   "noul": 0.23
+  },
+  "should_flee": {
+   "type": "noul",
+   "noul": 0.14
+  }
+ },
+ "usage": {
+  "input_tokens": 925,
+  "output_tokens": 109
+ },
+ "_latency_ms": 674.7
+}

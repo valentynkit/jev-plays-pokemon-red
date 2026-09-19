@@ -33,8 +33,10 @@ What ran for real and what did not:
   is 40 rows, 5 real and 35 tagged `"source": "fake"`; measure excludes the fakes and says
   so. No row carries a latency, so decisions/sec prints "not measured". README headline
   stays `__`.
-- Overlay: verified with `SDL_VIDEODRIVER=dummy uv run jpp overlay --replay
-  fixtures/runs/sample.jsonl` (1280x720, feed panel, state JSON, animated bars, sparkline).
+- Overlay: rebuilt for the camera in the demo session as 1080x1350 (four to five, phone
+  aspect), verified by dumping frames with `--frames` under `SDL_VIDEODRIVER=dummy`. The
+  ticker's decisions/sec now comes from recorded call latency, never the replay clock, so
+  `--demo` pacing cannot print itself as a measurement.
 
 CONTEXT.md changes made by the build (all in the file already):
 1. `wBattleResult` is a plain `db` at `$CF0B`, not a WRAM union; the latch stays.
@@ -121,3 +123,14 @@ the direct wire format into gateway evaluate calls on `127.0.0.1:4322`. Start it
 `JEV_BASE_URL=http://127.0.0.1:4322` for record and measure steps only. Never loop against
 it; unit tests stay on the fakes. Numbers measured this way carry the "via gateway shim"
 footnote until re-measured on the direct API against a pinned `jev-1.13.0`.
+
+**The balance is not the gate.** `GET https://ai-gateway.vercel.sh/v1/credits` read
+`4.970921048` while every call past the fifth still came back 429 with
+`"Free tier requests on this model are rate-limited. Upgrade to paid credits"`, and it was
+still 429 after eight retries at 12 second spacing. Granted credits do not lift the
+per-model free-tier limit; only a card top-up does. Check the 429 body before concluding
+anything about a rate limit, and budget about five calls per session until then.
+
+Measured 2026-09-18 over four fresh cassettes: 923.9, 885.8, 674.7, 861.1 ms, mean 836 ms,
+1.2 decisions/sec, $0.17/hour at ~920 input tokens. The "about a hundred milliseconds" hook
+in CONTEXT sections 1 and 8 is eight times off and must not be posted as written.

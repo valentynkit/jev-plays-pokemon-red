@@ -51,13 +51,13 @@ def main():
         questions = policy.questions_for(branch)
         key = policy.cache_key(branch.state, questions)
         cassette = RECORDED / f"{key}.json"
-        started = time.monotonic()
+        started = None
         if cassette.exists():  # already paid for; never send the same body twice
             payload = json.loads(cassette.read_text())
-            started = None
         else:
             try:
-                time.sleep(GAP)
+                time.sleep(GAP)  # before the clock starts: the gap is ours, not Jev's
+                started = time.monotonic()
                 payload = client.ask(branch.state, questions)
             except Exception as e:
                 print(f"{name:28} FAILED {type(e).__name__}: {e}", flush=True)

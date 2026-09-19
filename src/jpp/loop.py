@@ -9,15 +9,17 @@ import json
 import time
 from pathlib import Path
 
-from . import goals, options, route, symbols as S
+from . import goals, options, route, screen, symbols as S
 from .decode import decode
 from .options import Branch
 from .policy import Decision, Policy
 
 FRAMES_PER_TICK = 8  # one decode per 8 frames, ~7.5 decodes a second at 60 fps
 PRESS_FRAMES = 4
+TURN_SETTLE_TICKS = 120  # cap on waiting for a battle turn to play out
 NO_PROGRESS_CAP = 40  # decisions per goal with no progress, CONTEXT section 3
 BLOCKED_AFTER = 2  # presses of one direction from one tile before calling it a wall
+STEP_SETTLE = 4  # extra ticks to let a walking step land before judging it blocked
 
 
 def input_ready(state, button: str) -> bool:
@@ -70,8 +72,11 @@ class BattleLatch:
 class Driver:
     """Emulator plus the decoded snapshot, one tick at a time."""
 
-    def __init__(self, emulator):
+    def __init__(self, emulator, on_frame=None):
         self.emu = emulator
+        # set only when a clip is being captured: the loop then advances one frame at a
+        # time so the recording gets every frame, not one in eight
+        self.on_frame = on_frame
         self.latch = BattleLatch()
         self.state = None
         self.turn = 0  # turns inside the current battle, reset when one ends
@@ -79,9 +84,15 @@ class Driver:
         # stepping walks into a wall forever without this: the collision grid is the
         # screen's opinion, and an NPC or a ledge is not in it.
         self.stuck: dict[str, int] = {}
+        self.heading: str | None = None  # last direction that actually moved the player
 
     def tick(self, frames: int = FRAMES_PER_TICK):
-        self.emu.tick(frames)
+        if self.on_frame is None:
+            self.emu.tick(frames)
+        else:
+            for _ in range(frames):
+                self.emu.tick(1)
+                self.on_frame(self.emu)
         self.state = decode(self.emu.memory)
         before = self.latch.count
         self.latch.update(
@@ -95,8 +106,18 @@ class Driver:
         before = self._where()
         self.emu.button(button, PRESS_FRAMES)
         state = self.tick()
+        if button in route.DIRECTIONS:
+            # a step takes more than one tick of frames to land. Judging it after one
+            # reads every real step as a wall, and two of those retire the axis: the
+            # walk stops short of the waypoint and falls through to pressing A forever.
+            for _ in range(STEP_SETTLE):
+                if self._where() != before:
+                    break
+                state = self.tick()
         if self._where() != before:
             self.stuck.clear()
+            if button in route.DIRECTIONS:
+                self.heading = button
         elif button in route.DIRECTIONS:
             self.stuck[button] = self.stuck.get(button, 0) + 1
         return state
@@ -137,6 +158,16 @@ def probe(emulator, ticks: int, out=print, every: int = 8):
     return driver
 
 
+def battle_ready(state) -> bool:
+    """Whether wBattleMon and wEnemyMon hold a battle yet.
+
+    Both are zeroed through the encounter intro, and every menu byte lies about it, so a
+    branch taken on the flag alone asks about a level 0 MON_00 with no moves.
+    """
+    active, opponent = state.battle.active, state.battle.opponent
+    return bool(active and opponent and active.level and opponent.level)
+
+
 def classify(driver: Driver, goal, waypoint) -> tuple[str, object]:
     """Code decides what kind of tick this is. Only two answers reach Jev.
 
@@ -144,19 +175,36 @@ def classify(driver: Driver, goal, waypoint) -> tuple[str, object]:
     """
     st = driver.state
     if st.in_battle:
-        if st.max_menu_item > 0 or st.menu_item > 0:
-            if st.joy_ignore & (S.PAD_A | S.PAD_CTRL_PAD):
-                return "wait", None  # the menu is up but the script still owns the pad
-            branch = options.battle_branch(
-                st, goal, items=options.bag(driver.emu.memory), turn=driver.turn
-            )
-            return "branch", branch
+        if not battle_ready(st):
+            # "BLUE wants to fight!" is on screen and wBattleMon is still zeroed. The
+            # menu bytes cannot say so: wMaxMenuItem keeps the name list's 3 forever and
+            # wFontLoaded is overworld-only, so battle text leaves it at 0. The structs
+            # being filled in is the one signal that means the menu is really up.
+            return _press(st, "a")
+        if st.joy_ignore & (S.PAD_A | S.PAD_CTRL_PAD):
+            return "wait", None  # the menu is up but the script still owns the pad
+        branch = options.battle_branch(
+            st, goal, items=options.bag(driver.emu.memory), turn=driver.turn
+        )
+        return "branch", branch
+    prompt = screen.yes_no_prompt(driver.emu.memory)
+    if prompt:
+        # a cursor is up and A would just take whatever it is sitting on, which said YES
+        # to "give a nickname?" and then mashed the keyboard into AAAAAAAAAAAA
+        return "branch", options.dialogue_branch(st, goal, prompt[0], prompt[1])
+    if st.font_loaded:
+        # a text box with no cursor: A costs nothing. wFontLoaded, not wTextBoxID: the
+        # latter holds the id of the last box drawn and never clears, so on a cartridge
+        # it reads 1 from the intro onward and the agent presses A forever
         return _press(st, "a")
-    if st.text_box_id:
-        return _press(st, "a")  # a text box with no cursor: A costs nothing
     step = route.next_step(st, waypoint)
     if step and not driver.blocked(step):
         return _press(st, step)
+    if waypoint and step is None and driver.heading:
+        # standing on the waypoint. Stairs warp the moment they are stepped on, but a
+        # house door leaves the player on the mat and wants one more step through it,
+        # which is the direction that got us here.
+        return _press(st, driver.heading)
     if step and route.distance(st, waypoint) == 1:
         # the waypoint is the next tile and it will not be walked onto: it is an object,
         # Oak or a poke ball. Walking into it already turned the player to face it.
@@ -184,9 +232,10 @@ def play(
     log_path: Path | None = None,
     on_decision=None,
     max_ticks: int = 200_000,
+    on_frame=None,
 ) -> list[dict]:
     """Run until the goal stack empties or `max_decisions` Jev calls have happened."""
-    driver = Driver(emulator)
+    driver = Driver(emulator, on_frame=on_frame)
     stack = goals.GoalStack()
     records: list[dict] = []
     log = log_path.open("a") if log_path else None
@@ -220,6 +269,8 @@ def play(
             asked_on = driver.state
             for button in options.buttons_for(driver.state, payload, decision.option):
                 driver.press(button)
+            if payload.kind == "battle":
+                settle_turn(driver)
             record = _record(goal, payload, decision, driver, asked_on)
             records.append(record)
             if log:
@@ -232,6 +283,32 @@ def play(
         if log:
             log.close()
     return records
+
+
+def _battle_signature(state) -> tuple:
+    active, opponent = state.battle.active, state.battle.opponent
+    return (
+        state.in_battle,
+        active.hp if active else None,
+        opponent.hp if opponent else None,
+        state.active_slot,
+    )
+
+
+def settle_turn(driver: Driver):
+    """Advance until the chosen move has actually resolved.
+
+    The battle menu is back up long before the turn is over, and every byte that could
+    say otherwise is stale, so without this the same unchanged turn is asked again on the
+    next tick: one rival battle billed 139 decisions, eight of them identical at full HP.
+    """
+    before = _battle_signature(driver.state)
+    for _ in range(TURN_SETTLE_TICKS):
+        driver.tick()
+        if _battle_signature(driver.state) != before:
+            return
+        if input_ready(driver.state, "a"):
+            driver.press("a")  # damage text, level ups, whatever is between turns
 
 
 def _progress(driver: Driver) -> tuple:

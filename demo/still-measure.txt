@@ -1,0 +1,3 @@
+0.16 decisions/sec, $0.0017/hour (n=10 Jev calls over 1 run, 9 fell back, so the clock includes their retries, headless, unthrottled PyBoy)
+Brier 0.1764 on faints_this_turn (n=1 turns, base 0.0, constant-predictor 0.0, 95% CI 0.0-1.0) -- worse than the constant predictor
+wrote measure.json

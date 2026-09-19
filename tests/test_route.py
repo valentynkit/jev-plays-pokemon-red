@@ -43,7 +43,9 @@ def test_every_goal_with_walking_has_a_waypoint_on_every_map_it_crosses():
     # RedsHouse2F.asm and RedsHouse1F.asm warps
     assert route.WAYPOINTS["leave_house"][S.REDS_HOUSE_2F] == (7, 1)
     assert route.WAYPOINTS["leave_house"][S.REDS_HOUSE_1F] == (2, 7)
-    assert route.WAYPOINTS["win_lab_rival"] == {}  # the battle happens where we stand
+    # the rival does not challenge on the spot: on a cartridge the agent stood in the lab
+    # pressing A forever. He intercepts on the way out, so the goal walks to the door.
+    assert route.WAYPOINTS["win_lab_rival"] == {S.OAKS_LAB: (5, 11)}
     assert set(route.WAYPOINTS) == {g.name for g in GOALS}
 
 
@@ -100,3 +102,17 @@ def test_a_dead_end_is_not_a_branch():
 def test_free_directions_reads_the_grid_and_stays_in_bounds():
     assert sorted(route.free_directions(grid("up", "left"))) == ["left", "up"]
     assert route.free_directions([[FREE] * 2] * 2) == []
+
+
+def test_pallet_town_climbs_the_clear_column_before_crossing_to_the_gap():
+    """Measured on a cartridge: x=10 is the gap to Route 1 but only above y=2, and from
+    the lab door at y=12 it is walled. Closing x first parks against that wall."""
+    ram = make_ram.overworld()
+    ram[S.X_COORD], ram[S.Y_COORD] = 12, 12
+    ram[S.CUR_MAP] = S.PALLET_TOWN
+    goal = next(g for g in GOALS if g.name == "reach_viridian")
+    low = decode(bytes(ram))
+    assert route.waypoint_for(goal, low) == (9, 2)
+
+    ram[S.X_COORD], ram[S.Y_COORD] = 9, 2
+    assert route.waypoint_for(goal, decode(bytes(ram))) == (10, 0)

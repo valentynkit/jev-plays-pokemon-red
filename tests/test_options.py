@@ -168,3 +168,14 @@ def test_the_party_row_is_the_slot_even_with_a_fainted_member_above_it():
     assert options.buttons_for(state, branch, third) == (
         ["right", "a"] + ["down"] * (slot - 1) + ["a", "a"]
     )
+
+
+def test_answering_no_moves_the_cursor_off_yes():
+    """A alone takes whatever the cursor sits on, which said YES to the nickname prompt
+    and then mashed the keyboard into AAAAAAAAAAAA."""
+    state = decode(bytes(make_ram.overworld()))
+    branch = options.dialogue_branch(
+        state, GOAL, "give a nickname to CHARMANDER?", ["YES", "NO"]
+    )
+    assert options.buttons_for(state, branch, "answer_yes") == ["a"]
+    assert options.buttons_for(state, branch, "answer_no") == ["down", "a"]
